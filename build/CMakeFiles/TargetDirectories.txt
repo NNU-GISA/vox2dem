@@ -1,3 +1,3 @@
 /media/yuqiong/DATA/vox2dem/build/CMakeFiles/rebuild_cache.dir
 /media/yuqiong/DATA/vox2dem/build/CMakeFiles/edit_cache.dir
-/media/yuqiong/DATA/vox2dem/build/CMakeFiles/b2h.dir
+/media/yuqiong/DATA/vox2dem/build/CMakeFiles/v2d.dir

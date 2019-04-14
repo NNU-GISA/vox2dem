@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named b2h
+# Target rules for targets named v2d
 
 # Build rule for target.
-b2h: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 b2h
-.PHONY : b2h
+v2d: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 v2d
+.PHONY : v2d
 
 # fast build rule for target.
-b2h/fast:
-	$(MAKE) -f CMakeFiles/b2h.dir/build.make CMakeFiles/b2h.dir/build
-.PHONY : b2h/fast
+v2d/fast:
+	$(MAKE) -f CMakeFiles/v2d.dir/build.make CMakeFiles/v2d.dir/build
+.PHONY : v2d/fast
 
 main.o: main.cu.o
 
@@ -129,7 +129,7 @@ main.o: main.cu.o
 
 # target to build an object file
 main.cu.o:
-	$(MAKE) -f CMakeFiles/b2h.dir/build.make CMakeFiles/b2h.dir/main.cu.o
+	$(MAKE) -f CMakeFiles/v2d.dir/build.make CMakeFiles/v2d.dir/main.cu.o
 .PHONY : main.cu.o
 
 main.i: main.cu.i
@@ -138,7 +138,7 @@ main.i: main.cu.i
 
 # target to preprocess a source file
 main.cu.i:
-	$(MAKE) -f CMakeFiles/b2h.dir/build.make CMakeFiles/b2h.dir/main.cu.i
+	$(MAKE) -f CMakeFiles/v2d.dir/build.make CMakeFiles/v2d.dir/main.cu.i
 .PHONY : main.cu.i
 
 main.s: main.cu.s
@@ -147,7 +147,7 @@ main.s: main.cu.s
 
 # target to generate assembly for a file
 main.cu.s:
-	$(MAKE) -f CMakeFiles/b2h.dir/build.make CMakeFiles/b2h.dir/main.cu.s
+	$(MAKE) -f CMakeFiles/v2d.dir/build.make CMakeFiles/v2d.dir/main.cu.s
 .PHONY : main.cu.s
 
 # Help Target
@@ -158,7 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... b2h"
+	@echo "... v2d"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
