@@ -1,0 +1,5 @@
+#binvox ASCII data
+test
+dim 256 256 256
+translate 2.67833e+06 1.24929e+06 405.782
+scale 20.25

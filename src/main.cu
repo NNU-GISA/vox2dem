@@ -21,6 +21,8 @@
 #include <fstream>
 #include <iostream>
 #include <stdlib.h>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <cuda.h>
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgcodecs.hpp"
@@ -172,11 +174,12 @@ vector<string> split(const char *phrase, string delimiter){
 }
 
 
-void crop_min_box( Mat src_gray, string bid)
+void crop_min_box( Mat src_gray, string bid, string root)
 {
     // A function to crop and output minimum bounding box ...
     // @ src_gray : input gray scale image
     // @ bid : input file name to store results in folder
+    // @ root : root folder to store output images
     // Also tested a version where return the results to see if reversion is successful
 
     // binarize grayscale image to binary image as to get simpler contour
@@ -234,13 +237,20 @@ void crop_min_box( Mat src_gray, string bid)
     Size wrapped_size(256, 256);
     warpPerspective(src_gray, wrapped, M, wrapped_size);
     // imshow("Wrapped binary output", wrapped);
-    // string cropped_name = "/media/yuqiong/DATA/3dCityGan/playground/nyc_hmaps_cropped/" + bid + ".jpg";
-    string cropped_name = "/data/gmldata/nyc_hmaps_cropped/" + bid + ".jpg";
+
+    string cropped_path = root + "/" + "output_cropped";  // path to store DEM
+    if (!boost::filesystem::exists(cropped_path))
+        boost::filesystem::create_directories(cropped_path);
+
+    string meta_cropped = root + "/" + "meta_cropped";   // path to store binvox meta
+    if (!boost::filesystem::exists(meta_cropped))
+        boost::filesystem::create_directories(meta_cropped);
+
+    string cropped_name = cropped_path + "/" + bid + ".jpg";
     cv::imwrite(cropped_name, wrapped);
 
     // Write revert matrix to file!
-    // string revert_name = "/media/yuqiong/DATA/3dCityGan/playground/nyc_hmaps_revert/" + bid + ".xml";
-    string revert_name = "/data/gmldata/nyc_hmaps_revert/" + bid + ".xml";
+    string revert_name = meta_cropped + "/" + bid + ".xml";
     FileStorage out_file(revert_name, FileStorage::WRITE);
     out_file << "trans" << M;
     out_file.release();
@@ -270,8 +280,8 @@ Mat revert(Mat dst, string tls_file){
 
 int main(int argc, char **argv)
 {
-    if (argc != 4) {
-        cout << "Usage: v2d <cuda device> <binvox filename> <output root folder>" << endl << endl;
+    if (argc != 5) {
+        cout << "Usage: v2d <cuda device> <binvox filename> <output root folder> <crop and scale>" << endl << endl;
         exit(1);
     }
 
@@ -336,13 +346,26 @@ int main(int argc, char **argv)
 
     cv::Mat image = cv::Mat(H, W, CV_8UC1, img);
     string root = argv[3];
-    string imageName = root + bid + ".png";
+    // https://stackoverflow.com/questions/5621944/how-to-find-out-if-a-folder-exists-and-how-to-create-a-folder
+    if (!boost::filesystem::exists(root))
+        boost::filesystem::create_directories(root);
+
+    string img_path = root + "/" + "output_original";  // path to store DEM
+    if (!boost::filesystem::exists(img_path))
+        boost::filesystem::create_directories(img_path);
+
+    string meta_path = root + "/" + "meta_binvox";   // path to store binvox meta
+    if (!boost::filesystem::exists(meta_path))
+        boost::filesystem::create_directories(meta_path);
+
+    string imageName = img_path + "/" + bid + ".png";
 
     // check if the voxel grid is empty
     if (countNonZero(image) < 1){
         cout << "Error! binvox outputs zero matrix. Write to log..." << endl;
         std::ofstream log;
-        log.open("empty_log.txt", std::ios_base::app);
+        string log_path = root + "/empty_log.txt";
+        log.open(log_path.c_str(), std::ios_base::app);
         log << bname << endl;
         log.close();
         exit(-1);
@@ -355,9 +378,8 @@ int main(int argc, char **argv)
 
     //
     // now write the meta data to as ASCII
-    //
-    // string metaName = "/media/yuqiong/DATA/3dCityGan/playground/nyc_hmaps_meta/" + bid + ".txt";
-    string metaName = "/data/gmldata/nyc_hmaps_meta/" + bid + ".txt";
+    //``
+    string metaName = meta_path + "/" + bid + ".txt";
     ofstream *out = new ofstream(metaName.c_str());
     if(!out->good()) {
         cout << "Error opening [" << metaName << "]" << endl << endl;
@@ -376,8 +398,11 @@ int main(int argc, char **argv)
     // cout << "done" << endl << endl;
 
     //------------------------------------- Min bounding box code start ----------------------------------------//
-    blur( image, image, Size(3,3) );
-    crop_min_box(image, bid);
+    if (*argv[4] - '0' == 1){
+        // we choose to output the cropped and scaled images as well!
+        blur( image, image, Size(3,3) );
+        crop_min_box(image, bid, root);
+    }
     /*
     // Just some code to check if the revert is successful
     Mat res = crop_min_box(image, bid);

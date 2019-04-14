@@ -40,3 +40,13 @@ Notes on output images:
 2. If choose no crop or scale, the DEM will be the height map on the x-y plane. i.e. for each pixel, the height is the greatest `z` axis value that is occupied. For __BuildingNet__ data, the pixel values in the result image are always integers in the range of 0 to 255, making the resultant image grayscale.
 3. If choose crop and scale, this application will 1) binarize the image and 2) find the contour of the building shape and 3) creating a bounding box along shape contour and 4) crop and rescale the bounding box into a 256x256 pixel images.
 4. For point 2 and 3 above, note every output image will have accompanying metadata. If no cropping, metadata will include the translation and scaling factor produced by **binvox**. If crop and scale, additional metadata will include the perspective transform matrix that could revert the cropped height map into original images. This perspective transform matrix will be stored in .xml format in the [TODO].
+
+
+## Example
+After building, run the following command from the `build` directory:
+`./v2d 0 ../sample/test.binvox ../sample/result 1`
+
+Resultant DEM
+
+## Contact
+For any questions please contact Yuqiong Li at yl5090 at nyu dot edu.
