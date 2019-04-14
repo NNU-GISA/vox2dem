@@ -1,24 +1,42 @@
-## 20190302
-CUDA-accelerated binvox to heightmap conversion. Also cropped ROI and rescale into 256x256 image.
-Inputs:
-- path to a `.binvox` file
+# vox2dem
 
-Outputs:
-- original heightmap. If empty, will write to "empty_log.txt". This file must be created side-by-side with the b2h application.
-- binvox metadata. include translation and scaling factor
-- cropped heightmap. will be stored in another folder
-- cropped perspective transform matrix. will be stored in .xml format in another folder.
+## Introduction
+A CUDA accelerated C++ tool to extract digital elevation models (i.e. heightmaps) from building voxels.
 
-main.cu is the main program.
+Input voxels to this tool should be of the format `.binvox`. This is a format used by [**binvox**](http://www.patrickmin.com/binvox/), which is a tool to read 3D models, rasterizes it into binary 3D voxel grid, and writes to voxel files.
 
-Usage:
+Outputs of this tool are `.png` images. Shapes of the images depend on shape of the input voxels. For example, if a voxel grid is 256x256x256, then the output image will be 256x256 pixels.
 
-~~`cd cmake-build-debug`~~
-~~Then do `make` and will build target b2h with main.cu~~
+Options
 
-`CMake` in the same directory as this README.md document
-Dependency: OpenCV and CUDA
-Caveats:
-- some warnings in the building process as sm_arch is not properly set. but currently the program runs ok.
-- output paths in `main.cu` is hard coded and needed to be changed in your local OS.
-- need to reconfigure according to your local systems.
+
+Also cropped ROI and rescale into 256x256 image.
+
+
+## Usage
+
+Build
+```
+git clone https://github.com/yuqli/vox2dem.git
+cd build
+cmake ../src
+make
+```
+This will build target `v2d` from `main.cu`.  
+Dependencies: OpenCV and CUDA
+
+To use `v2d`:
+
+`./v2d <cuda device> <binvox filename> <output root folder> <crop and scale >`
+
+Options:
+- `<cuda device>`: int, indicating which GPU to use, starting from 0.
+- `<binvox filename>`: string, the full path to `.binvox` file.
+- `<output root folder>`: string, the full path to the folder that stores output `.png` images.
+- `<crop and scale>`: binary int. `0` means no crop or scale, `1` means crop and scale.   
+
+Notes on output images:
+1. Some voxels could be empty, i.e. none of the grids are occupied. In this case, the program will write paths to the empty voxels to `empty_log.txt` located in the `<output root folder>`.  
+2. If choose no crop or scale, the DEM will be the height map on the x-y plane. i.e. for each pixel, the height is the greatest `z` axis value that is occupied. For __BuildingNet__ data, the pixel values in the result image are always integers in the range of 0 to 255, making the resultant image grayscale.
+3. If choose crop and scale, this application will 1) binarize the image and 2) find the contour of the building shape and 3) creating a bounding box along shape contour and 4) crop and rescale the bounding box into a 256x256 pixel images.
+4. For point 2 and 3 above, note every output image will have accompanying metadata. If no cropping, metadata will include the translation and scaling factor produced by **binvox**. If crop and scale, additional metadata will include the perspective transform matrix that could revert the cropped height map into original images. This perspective transform matrix will be stored in .xml format in the [TODO].

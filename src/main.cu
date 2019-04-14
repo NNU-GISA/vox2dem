@@ -270,8 +270,8 @@ Mat revert(Mat dst, string tls_file){
 
 int main(int argc, char **argv)
 {
-    if (argc != 3) {
-        cout << "Usage: read_binvox <cuda device> <binvox filename>" << endl << endl;
+    if (argc != 4) {
+        cout << "Usage: v2d <cuda device> <binvox filename> <output root folder>" << endl << endl;
         exit(1);
     }
 
@@ -295,15 +295,13 @@ int main(int argc, char **argv)
     vector<string> all_inputs = split(argv[2], "/");
     string bname = all_inputs.back();  // last element is file name "input.binvox"
     string bid = split(bname.c_str(), ".").front();    // first element is building id
-    cout << "building file name " << bname << endl;
-    cout << "building name " << bid << endl;
+    cout << "Building file name " << bname << endl;
+    cout << "Building name " << bid << endl;
 
 
     imgsize = H * W;
     // https://stackoverflow.com/questions/2204176/how-to-initialise-memory-with-new-operator-in-c
     img = new byte[imgsize]();  // special syntax to initialize things to zero
-
-    //------------------------------------ CPU version of code --------------------------------------//
 
 
     //------------------------------------- CUDA code starts ----------------------------------------//
@@ -337,14 +335,15 @@ int main(int argc, char **argv)
     //------------------------------------- CUDA code finish ----------------------------------------//
 
     cv::Mat image = cv::Mat(H, W, CV_8UC1, img);
-    // string imageName = "/media/yuqiong/DATA/3dCityGan/playground/nyc_hmaps/" + bid + ".jpg";
-    string imageName = "/data/gmldata/nyc_hmaps/" + bid + ".jpg";
-    // zero check
+    string root = argv[3];
+    string imageName = root + bid + ".png";
+
+    // check if the voxel grid is empty
     if (countNonZero(image) < 1){
-        cout << "Error binvox outputs zero matrix" << endl;
+        cout << "Error! binvox outputs zero matrix. Write to log..." << endl;
         std::ofstream log;
         log.open("empty_log.txt", std::ios_base::app);
-        log << imageName << endl;
+        log << bname << endl;
         log.close();
         exit(-1);
     }
