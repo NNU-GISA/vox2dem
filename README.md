@@ -7,11 +7,6 @@ Input voxels to this tool should be of the format `.binvox`. This is a format us
 
 Outputs of this tool are `.png` images. Shapes of the images depend on shape of the input voxels. For example, if a voxel grid is 256x256x256, then the output image will be 256x256 pixels.
 
-Options
-
-
-Also cropped ROI and rescale into 256x256 image.
-
 
 ## Usage
 
@@ -49,11 +44,11 @@ After building, run the following command from the `build` directory:
 
 Resultant original image :
 
-[](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_original/test.png)
+![](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_original/test.png)
 
 Resultant cropped image :
 
-[](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_cropped/test.jpg)
+![](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_cropped/test.jpg)
 
 ## Contact
 For any questions please contact Yuqiong Li at yl5090 at nyu dot edu.
