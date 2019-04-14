@@ -44,9 +44,16 @@ Notes on output images:
 
 ## Example
 After building, run the following command from the `build` directory:
+
 `./v2d 0 ../sample/test.binvox ../sample/result 1`
 
-Resultant DEM
+Resultant original image :
+
+[](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_original/test.png)
+
+Resultant cropped image :
+
+[](https://github.com/yuqli/vox2dem/blob/master/sample/result/output_cropped/test.jpg)
 
 ## Contact
 For any questions please contact Yuqiong Li at yl5090 at nyu dot edu.
